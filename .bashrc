@@ -23,9 +23,28 @@ export JAVA_HOME="$(/usr/libexec/java_home)"
 export PATH="$JAVA_HOME/bin:$PATH"
 
 alias lsusb="system_profiler SPUSBDataType"
+alias xml_pp="xmllint --format -"
+alias mscrcpy="scrcpy -b 2M -m 1080"
+alias gitrecent="git for-each-ref --sort=committerdate refs/remotes/ --format='%(HEAD) %(color:yellow)%(refname:short)%(color:reset) - %(color:red)%(objectname:short)%(color:reset) - %(contents:subject) - %(authorname) (%(color:green)%(committerdate:relative)%(color:reset))'"
 
-# NVM
-export NODE_BINARY_PATH="$(which node)"
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+plogcat() {
+    if [[ -z $2 ]]; then
+        adb logcat | grep -F "`adb shell ps | grep $1 | awk {'print $2'}`"
+    else
+        echo "usage: plogcat packagename"
+    fi
+}
+
+commitdiff() {
+    if [[ -z $3 ]]; then
+        git log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr)%Creset' --abbrev-commit --date=relative $1..$2
+    else
+        git log --date=relative $1..$2
+    fi
+}
+
+pull-package() {
+    PACKAGE=$1
+    adb pull $(adb shell pm path ${PACKAGE} | cut -c 9- )
+}
 
