@@ -44,6 +44,27 @@ alias overlay="adb shell am broadcast -a com.amazon.action.toggle.metric.overlay
 
 alias fos_overlay="adb shell am start com.amazon.ssm/com.amazon.ssm.ControlPanel"
 
+alias startLuna="adb shell am start -n 'com.amazon.spiderpork/com.amazon.spid
+erp
+ork.activities.DebugMainActivity' -a android.intent.action.MAIN -c android.intent.category.LAUNCHER"
+
+alias fgActivity="adb shell dumpsys window windows | grep -E 'mCurrentFocus|mFocusedApp'"
+
+alias vh="adb exec-out uiautomator dump /dev/tty | rev | cut -c33- | rev | xml_pp | less"
+
+alias voiceview="adb shell am start-foreground-service -a com.amazon.logan.settings.TOGGLE_ON_OFF"
+
+function talkback() {
+    local current=$(adb shell settings get secure enabled_accessibility_services)
+    if [[ $current == *"talkback"* ]]; then
+        adb shell settings put secure enabled_accessibility_services none
+        echo "TalkBack disabled"
+    else
+        adb shell settings put secure enabled_accessibility_services com.google.android.marvin.talkback/com.google.android.marvin.talkback.TalkBackService
+        echo "TalkBack enabled"
+    fi
+}
+
 plogcat() {
     if [[ -z $2 ]]; then
         adb logcat | grep -F "`adb shell ps | grep $1 | awk {'print $2'}`"
@@ -119,22 +140,5 @@ alias bbb='brc --allPackages brazil-build'
 alias bbra='bbr apollo-pkg'
 alias brazil-reconnect="brazil-package-cache enable_edge_cache; brazil-package-cache start"
 alias envupdate="brazil ws env update --activate"
-
-### TOOLING SETUP ###
-
-export NVM_DIR="$HOME/.nvm"
-  [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"  # This loads nvm
-  [ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
-
-export PATH="/Users/greenman/.pyenv/bin:$PATH"
-
-export PATH="/usr/local/opt/icu4c/bin:$PATH"
-export PATH="/usr/local/opt/icu4c/sbin:$PATH"
-
-export PATH="/usr/local/Cellar/ninja/1.10.2/bin:$PATH"
-
-eval "$(rbenv init - -bash)"
-
-
 
 
